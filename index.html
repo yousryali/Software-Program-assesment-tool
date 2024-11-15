@@ -117,6 +117,7 @@
         }
 
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -269,87 +270,88 @@
         <button type="button" onclick="addRow('current_issues_table')">Add Issue</button>
     </div>
 
-    <div class="table-container">
-        <table id="dependencies_table">
-            <tr>
-                <th>Dependency</th>
-                <th>Status</th>
-            </tr>
-            <tr>
-                <td><input type="text" class="dependency" placeholder="Enter dependency"></td>
-                <td><input type="text" class="status" placeholder="Enter status"></td>
-            </tr>
-        </table>
-        <button type="button" onclick="addRow('dependencies_table')">Add Dependency</button>
-    </div>
-
-    <div class="table-container">
-        <table id="blockers_table">
-            <tr>
-                <th>Blocker</th>
-                <th>Details</th>
-            </tr>
-            <tr>
-                <td><input type="text" class="blocker" placeholder="Enter blocker"></td>
-                <td><input type="text" class="blocker_details" placeholder="Enter blocker details"></td>
-            </tr>
-        </table>
-        <button type="button" onclick="addRow('blockers_table')">Add Blocker</button>
-    </div>
-
-    <!-- Team Details Section -->
-    <div class="section-title section-team">Team Details</div>
+    <!-- Team and Resources Section -->
+    <div class="section-title section-team">Team and Resources</div>
 
     <div class="table-container">
         <table id="team_members_table">
             <tr>
-                <th>Name</th>
+                <th>Team Member Name</th>
                 <th>Role</th>
                 <th>Responsibilities</th>
-                <th>Key Competencies</th>
             </tr>
             <tr>
-                <td><input type="text" class="team_member_name" placeholder="Enter name"></td>
+                <td><input type="text" class="team_member_name" placeholder="Enter team member"></td>
                 <td><input type="text" class="team_member_role" placeholder="Enter role"></td>
                 <td><input type="text" class="team_member_responsibilities" placeholder="Enter responsibilities"></td>
-                <td><input type="text" class="team_member_competencies" placeholder="Enter competencies"></td>
             </tr>
         </table>
         <button type="button" onclick="addRow('team_members_table')">Add Team Member</button>
     </div>
 
-    <div>
-        <label for="team_challenges">Team Challenges (Morale, conflicts, skill gaps)</label>
-        <textarea id="team_challenges" placeholder="Describe any challenges the team is facing"></textarea>
-    </div>
-
-    <div>
-        <label for="communication_tools">Preferred Communication Tools and Styles</label>
-        <textarea id="communication_tools" placeholder="Enter preferred tools and communication styles"></textarea>
-    </div>
-
-    <!-- Generate Excel Button at the end -->
-    <button class="generate-button" onclick="generateExcel()">Generate Data as Excel</button>
-
     <script>
-        // Function to add rows dynamically to the tables
+        // Function to add rows to tables
         function addRow(tableId) {
-            var table = document.getElementById(tableId);
-            var newRow = table.insertRow(-1);
-            var columns = table.rows[0].cells.length;
+            const table = document.getElementById(tableId);
+            const newRow = table.insertRow(table.rows.length);
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
 
-            for (var i = 0; i < columns; i++) {
-                var cell = newRow.insertCell(i);
-                var inputElement = document.createElement('input');
-                inputElement.type = 'text';
-                cell.appendChild(inputElement);
+            if (tableId === 'escalation_reasons_table' || tableId === 'internal_stakeholders_table' || tableId === 'team_members_table') {
+                cell1.innerHTML = `<input type="text" class="${tableId}_name" placeholder="Enter value">`;
+                cell2.innerHTML = `<input type="text" class="${tableId}_role" placeholder="Enter value">`;
+                cell3.innerHTML = `<input type="text" class="${tableId}_involvement" placeholder="Enter value">`;
             }
         }
 
-        // Function to generate data as Excel
+        // Function to generate the Excel file
         function generateExcel() {
-            // Your code to collect data and generate Excel file
-            alert("This functionality will generate the Excel data.");
+            let programName = document.getElementById('program_name').value;
+            let programObjective = document.getElementById('program_objective').value;
+            let currentStatus = document.getElementById('current_status').value;
+            let reasonsStatus = document.getElementById('reasons_status').value;
+
+            let programData = [
+                ['Program Name', programName],
+                ['Program Objective', programObjective],
+                ['Current Status', currentStatus],
+                ['Reasons for Current Status', reasonsStatus],
+            ];
+
+            // Collecting escalation reasons
+            let escalationReasons = [];
+            const escalationRows = document.querySelectorAll('.escalation_reason');
+            const impacts = document.querySelectorAll('.escalation_impact');
+            for (let i = 0; i < escalationRows.length; i++) {
+                if (escalationRows[i].value && impacts[i].value) {
+                    escalationReasons.push([escalationRows[i].value, impacts[i].value]);
+                }
+            }
+
+            // Collecting internal stakeholders
+            let internalStakeholders = [];
+            const stakeholderNames = document.querySelectorAll('.stakeholder_name');
+            const stakeholderRoles = document.querySelectorAll('.stakeholder_role');
+            const stakeholderInvolvements = document.querySelectorAll('.stakeholder_involvement');
+            for (let i = 0; i < stakeholderNames.length; i++) {
+                if (stakeholderNames[i].value && stakeholderRoles[i].value && stakeholderInvolvements[i].value) {
+                    internalStakeholders.push([stakeholderNames[i].value, stakeholderRoles[i].value, stakeholderInvolvements[i].value]);
+                }
+            }
+
+            // Generate Excel file
+            const ws_program = XLSX.utils.aoa_to_sheet(programData);
+            const ws_escalation = XLSX.utils.aoa_to_sheet(escalationReasons);
+            const ws_stakeholders = XLSX.utils.aoa_to_sheet(internalStakeholders);
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws_program, 'Program Overview');
+            XLSX.utils.book_append_sheet(wb, ws_escalation, 'Escalation Reasons');
+            XLSX.utils.book_append_sheet(wb, ws_stakeholders, 'Internal Stakeholders');
+
+            // Write file
+            XLSX.writeFile(wb, 'ProgramAssessmentTool.xlsx');
         }
     </script>
 
