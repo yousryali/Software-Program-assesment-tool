@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program Assessment Tool</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .section-program {
+            background-color: #4CAF50;
+        }
+
+        .section-scope {
+            background-color: #FF8C00;
+        }
+
+        .section-risks {
+            background-color: #FF6347;
+        }
+
+        .section-team {
+            background-color: #1E90FF;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        input[type="text"], input[type="date"], textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 80px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        .table-container button {
+            margin-top: 10px;
+        }
+
+        .generate-button {
+            display: block;
+            margin: 20px auto;
+            background-color: #008CBA;
+            padding: 12px 24px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .generate-button:hover {
+            background-color: #005f7a;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h2>Program Assessment Tool</h2>
+
+    <!-- Generate Excel Button at the beginning -->
+    <button class="generate-button" onclick="generateExcel()">Generate Data as Excel</button>
+
+    <!-- Program Overview Section -->
+    <div class="section-title section-program">Program Overview</div>
+    <table>
+        <tr>
+            <th>Field</th>
+            <th>Details</th>
+        </tr>
+        <tr>
+            <td>Program Name</td>
+            <td><input type="text" id="program_name" placeholder="Enter program name"></td>
+        </tr>
+        <tr>
+            <td>Program Objective (What is it meant to achieve?)</td>
+            <td><textarea id="program_objective" placeholder="Enter program objective"></textarea></td>
+        </tr>
+        <tr>
+            <td>Current Status (Green/Yellow/Red)</td>
+            <td>
+                <select id="current_status">
+                    <option value="Green">Green</option>
+                    <option value="Yellow">Yellow</option>
+                    <option value="Red">Red</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Reasons for Current Status</td>
+            <td><textarea id="reasons_status" placeholder="Explain the reasons for the current status"></textarea></td>
+        </tr>
+        <tr>
+            <td>Escalation Reason(s)</td>
+            <td>
+                <div class="table-container">
+                    <table id="escalation_reasons_table">
+                        <tr>
+                            <th>Reason</th>
+                            <th>Impact</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="escalation_reason" placeholder="Enter reason"></td>
+                            <td><input type="text" class="escalation_impact" placeholder="Enter impact"></td>
+                        </tr>
+                    </table>
+                    <button type="button" onclick="addRow('escalation_reasons_table')">Add Row</button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>Start Date</td>
+            <td><input type="date" id="start_date"></td>
+        </tr>
+        <tr>
+            <td>Expected End Date</td>
+            <td><input type="date" id="end_date"></td>
+        </tr>
+        <tr>
+            <td>Key Stakeholders (Internal - Names, Roles, Involvement)</td>
+            <td>
+                <div class="table-container">
+                    <table id="internal_stakeholders_table">
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Involvement</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="stakeholder_name" placeholder="Enter name"></td>
+                            <td><input type="text" class="stakeholder_role" placeholder="Enter role"></td>
+                            <td><input type="text" class="stakeholder_involvement" placeholder="Enter involvement"></td>
+                        </tr>
+                    </table>
+                    <button type="button" onclick="addRow('internal_stakeholders_table')">Add Row</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Program Scope Section -->
+    <div class="section-title section-scope">Program Scope</div>
+    
+    <table id="critical_deliverables_table">
+        <tr>
+            <th>Critical Deliverables</th>
+            <th>Deadline</th>
+        </tr>
+        <tr>
+            <td><input type="text" class="deliverable_name" placeholder="Enter deliverable"></td>
+            <td><input type="date" class="deliverable_deadline"></td>
+        </tr>
+    </table>
+    <button type="button" onclick="addRow('critical_deliverables_table')">Add Deliverable</button>
+
+    <div>
+        <label for="scope_changed">Has the Scope Changed? (If yes, specify changes and reasons)</label>
+        <textarea id="scope_changed" placeholder="Explain if scope has changed"></textarea>
+    </div>
+
+    <div class="table-container">
+        <table id="milestones_table">
+            <tr>
+                <th>Milestone</th>
+                <th>Deadline</th>
+            </tr>
+            <tr>
+                <td><input type="text" class="milestone_name" placeholder="Enter milestone"></td>
+                <td><input type="date" class="milestone_deadline"></td>
+            </tr>
+        </table>
+        <button type="button" onclick="addRow('milestones_table')">Add Milestone</button>
+    </div>
+
+    <!-- Risk and Issues Section -->
+    <div class="section-title section-risks">Risk and Issues</div>
+
+    <div class="table-container">
+        <table id="known_risks_table">
+            <tr>
+                <th>Risk</th>
+                <th>Probability</th>
+                <th>Impact</th>
+            </tr>
+            <tr>
+                <td><input type="text" class="risk" placeholder="Enter risk"></td>
+                <td><input type="text" class="probability" placeholder="Enter probability"></td>
+                <td><input type="text" class="impact" placeholder="Enter impact"></td>
+            </tr>
+        </table>
+        <button type="button" onclick="addRow('known_risks_table')">Add Risk</button>
+    </div>
+
+    <div class="table-container">
+        <table id="current_issues_table">
+            <tr>
+                <th>Issue</th>
+                <th>Resolution Steps</th>
+            </tr>
+            <tr>
+                <td><input type="text" class="issue" placeholder="Enter issue"></td>
+                <td><input type="text" class="resolution_steps" placeholder="Enter resolution steps"></td>
+            </tr>
+        </table>
+        <button type="button" onclick="addRow('current_issues_table')">Add Issue</button>
+    </div>
+
+    <div class="table-container">
+        <table id="dependencies_table">
+            <tr>
+                <th>Dependency</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td><input type="text" class="dependency" placeholder="Enter dependency"></td>
+                <td><input type="text" class="status" placeholder="Enter status"></td>
+            </tr>
+        </table>
+        <button type="button" onclick="addRow('dependencies_table')">Add Dependency</button>
+    </div>
+
+    <div class="table-container">
+        <table id="blockers_table">
+            <tr>
+                <th>Blocker</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td><input type="text" class="blocker" placeholder="Enter blocker"></td>
+                <td><input type="text" class="blocker_details" placeholder="Enter blocker details"></td>
+            </tr>
+        </table>
+        <button type="button" onclick="addRow('blockers_table')">Add Blocker</button>
+    </div>
+
+    <!-- Team Details Section -->
+    <div class="section-title section-team">Team Details</div>
+
+    <div class="table-container">
+        <table id="team_members_table">
+            <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Responsibilities</th>
+                <th>Key Competencies</th>
+            </tr>
+            <tr>
+                <td><input type="text" class="team_member_name" placeholder="Enter name"></td>
+                <td><input type="text" class="team_member_role" placeholder="Enter role"></td>
+                <td><input type="text" class="team_member_responsibilities" placeholder="Enter responsibilities"></td>
+                <td><input type="text" class="team_member_competencies" placeholder="Enter competencies"></td>
+            </tr>
+        </table>
+        <button type="button" onclick="addRow('team_members_table')">Add Team Member</button>
+    </div>
+
+    <div>
+        <label for="team_challenges">Team Challenges (Morale, conflicts, skill gaps)</label>
+        <textarea id="team_challenges" placeholder="Describe any challenges the team is facing"></textarea>
+    </div>
+
+    <div>
+        <label for="communication_tools">Preferred Communication Tools and Styles</label>
+        <textarea id="communication_tools" placeholder="Enter preferred tools and communication styles"></textarea>
+    </div>
+
+    <!-- Generate Excel Button at the end -->
+    <button class="generate-button" onclick="generateExcel()">Generate Data as Excel</button>
+
+    <script>
+        // Function to add rows dynamically to the tables
+        function addRow(tableId) {
+            var table = document.getElementById(tableId);
+            var newRow = table.insertRow(-1);
+            var columns = table.rows[0].cells.length;
+
+            for (var i = 0; i < columns; i++) {
+                var cell = newRow.insertCell(i);
+                var inputElement = document.createElement('input');
+                inputElement.type = 'text';
+                cell.appendChild(inputElement);
+            }
+        }
+
+        // Function to generate data as Excel
+        function generateExcel() {
+            // Your code to collect data and generate Excel file
+            alert("This functionality will generate the Excel data.");
+        }
+    </script>
+
+</body>
+</html>
